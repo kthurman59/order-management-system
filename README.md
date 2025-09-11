@@ -1,4 +1,3 @@
-```markdown
 ```mermaid
 flowchart TD
     A[Implement OrderService CRUD API] --> B[Integration tests with Testcontainers]
