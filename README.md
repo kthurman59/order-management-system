@@ -1,18 +1,14 @@
-# order-management-system
-flowchart LR
-    Dev[Developer\n(Code + PRs)]
-    GitHub[GitHub Repo\n(Code + Issues + Projects)]
-    CI[GitHub Actions\nBuild + Test + Sonar + Docker]
-    Registry[(Container Registry\nGHCR / ECR / GCR)]
-    InfraRepo[Infra Repo\nHelm / Kustomize Manifests]
-    FluxCD[FluxCD\nGitOps Operator]
-    Cluster[Kubernetes Cluster\nCloud: EKS / GKE / AKS]
-    Obs[Observability Stack\nPrometheus + Grafana + Tracing]
-
-    Dev -->|push PR / commit| GitHub
-    GitHub -->|trigger pipeline| CI
-    CI -->|push Docker image| Registry
-    CI -->|update manifests\n(new image tag)| InfraRepo
-    InfraRepo -->|watched by| FluxCD
-    FluxCD -->|sync + apply manifests| Cluster
-    Cluster -->|export metrics/logs/traces| Obs
+```mermaid
+kanban
+  title Project Backlog
+  section Features
+    Implement OrderService CRUD API
+  section Infrastructure
+    Set up GitHub Actions CI/CD pipeline
+    Fix Docker build caching issue
+  section Testing
+    Integration tests with Testcontainers
+  section Documentation
+    Draft OPERATIONS.md
+  section Enhancements
+    Refactor layered architecture
