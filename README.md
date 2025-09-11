@@ -1,14 +1,8 @@
+```markdown
 ```mermaid
-kanban
-  title Project Backlog
-  section Features
-    Implement OrderService CRUD API
-  section Infrastructure
-    Set up GitHub Actions CI/CD pipeline
-    Fix Docker build caching issue
-  section Testing
-    Integration tests with Testcontainers
-  section Documentation
-    Draft OPERATIONS.md
-  section Enhancements
-    Refactor layered architecture
+flowchart TD
+    A[Implement OrderService CRUD API] --> B[Integration tests with Testcontainers]
+    B --> C[Refactor layered architecture]
+    A --> D[Set up GitHub Actions CI/CD pipeline]
+    D --> E[Fix Docker build caching issue]
+    A --> F[Draft OPERATIONS.md]
