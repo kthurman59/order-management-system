@@ -1,6 +1,7 @@
 package com.kevdev.oms.entity;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "products")
@@ -12,25 +13,38 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private Float price;
+    // Money should be BigDecimal
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal price;
 
     // Constructors
-    public Product() {}
+    public Product() {
+    }
 
-    public Product(String name, Float price) {
+    public Product(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Float getPrice() { return price; }
-    public void setPrice(Float price) { this.price = price; }
-
+    public BigDecimal getPrice() {
+        return price;
+    }
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
 }
