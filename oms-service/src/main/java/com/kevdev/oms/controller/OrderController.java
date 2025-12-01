@@ -1,7 +1,9 @@
 package com.kevdev.oms.controller;
 
-import com.kevdev.oms.entity.Order;
-import com.kevdev.oms.repository.OrderRepository;
+import com.kevdev.oms.dto.CreateOrderRequest;
+import com.kevdev.oms.dto.OrderResponse;
+import com.kevdev.oms.service.OrderService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,46 +12,35 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private final OrderRepository orderRepository;
+    private final OrderService orderService;
 
-    public OrderController(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @GetMapping
-    public List<Order> getAll() {
-        return orderRepository.findAll();
+    public List<OrderResponse> getAll() {
+        return orderService.getAllOrders();
     }
 
     @GetMapping("/{id}")
-    public Order getById(@PathVariable Long id) {
-        return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+    public OrderResponse getById(@PathVariable Long id) {
+        return orderService.getOrder(id);
     }
 
     @PostMapping
-    public Order create(@RequestBody Order order) {
-        return orderRepository.save(order);
+    public OrderResponse create(@Valid @RequestBody CreateOrderRequest request) {
+        return orderService.createOrder(request);
     }
 
-    @PutMapping
-    public Order update(@PathVariable Long id, @RequestBody Order order) {
-        Order existing = orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-
-        existing.setCustomer(order.getCustomer());
-        existing.setProducts(order.getProducts());
-        existing.setOrderDate(order.getOrderDate());
-        return orderRepository.save(existing);
+    @PutMapping("/{id}")
+    public OrderResponse update(@PathVariable Long id,
+                                @Valid @RequestBody CreateOrderRequest request) {
+        return orderService.updateOrder(id, request);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        orderRepository.deleteById(id);
+        orderService.deleteOrder(id);
     }
-
-
-
-
-
 }

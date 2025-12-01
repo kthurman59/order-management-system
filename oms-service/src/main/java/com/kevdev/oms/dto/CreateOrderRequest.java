@@ -1,13 +1,21 @@
 package com.kevdev.oms.dto;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class CreateOrderRequest {
 
+    @NotNull
     private Long customerId;
-    private List<Long> productIds;
-    private LocalDateTime orderDate; // optional
+
+    @NotEmpty
+    private List<@NotNull Long> productIds;
+
+    // optional, service already defaults to now if this is null
+    private LocalDateTime orderDate;
 
     public Long getCustomerId() {
         return customerId;
