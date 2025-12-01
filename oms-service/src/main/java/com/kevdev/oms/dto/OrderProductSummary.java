@@ -1,30 +1,19 @@
-package com.kevdev.oms.entity;
+package com.kevdev.oms.dto;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "products")
-public class Product {
+public class OrderProductSummary {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
     private String name;
-
-    @Column(nullable = false, unique = true, length = 100)
     private String sku;
-
-    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    public Product() {
-        // for JPA
+    public OrderProductSummary() {
     }
 
-    public Product(String name, String sku, BigDecimal price) {
+    public OrderProductSummary(Long id, String name, String sku, BigDecimal price) {
+        this.id = id;
         this.name = name;
         this.sku = sku;
         this.price = price;

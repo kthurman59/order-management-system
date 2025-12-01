@@ -1,0 +1,237 @@
+{
+  "labels": [
+    "Backend",
+    "Database",
+    "API",
+    "Testing",
+    "CI",
+    "Docker",
+    "Docs",
+    "Observability",
+    "Config",
+    "Security",
+    "MVP",
+    "Stretch",
+    "Quality",
+    "Project"
+  ],
+  "milestones": [
+    { "title": "Setup", "description": "Project hardening and base configuration" },
+    { "title": "MVP Backend", "description": "Domain model, migrations, services, REST API, tests" },
+    { "title": "CI and Docker", "description": "Build pipeline and containerization" },
+    { "title": "Polish and Stretch", "description": "Docs, observability, extras" }
+  ],
+  "issues": [
+    {
+      "title": "Repo hardening. Java 21 and Maven Wrapper",
+      "body": "Set Java toolchain to 21 in pom.xml. Ensure Maven Wrapper committed. Verify clean build with mvnw.",
+      "labels": ["Backend","Quality","Project"],
+      "milestone": "Setup"
+    },
+    {
+      "title": "Add core Spring starters",
+      "body": "Add web, validation, data jpa, actuator, springdoc openapi ui, lombok, postgresql to pom.xml.",
+      "labels": ["Backend","API","MVP"],
+      "milestone": "Setup"
+    },
+    {
+      "title": "Add code quality plugins",
+      "body": "Add Spotless for formatting. Add Checkstyle. Add Jacoco. Configure fail on low coverage threshold you choose.",
+      "labels": ["Quality","Testing"],
+      "milestone": "Setup"
+    },
+    {
+      "title": "Establish base package layout",
+      "body": "Create packages controller, service, repository, domain, dto, config, exception under com.yourorg.oms.",
+      "labels": ["Backend","Project"],
+      "milestone": "Setup"
+    },
+    {
+      "title": "Profiles and configuration",
+      "body": "Create application.yml that sets spring.profiles.active=dev. Add application-dev.yml using H2. Add application-prod.yml for Postgres using env vars.",
+      "labels": ["Config","Backend","MVP"],
+      "milestone": "Setup"
+    },
+    {
+      "title": "Enable Actuator basics",
+      "body": "Expose health and info endpoints only by default. Document URLs.",
+      "labels": ["Observability","Config"],
+      "milestone": "Setup"
+    },
+    {
+      "title": "Introduce Flyway and disable ddl auto",
+      "body": "Add Flyway. Turn off hibernate ddl auto for dev once migrations are present. Verify migration runs on startup.",
+      "labels": ["Database","Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Flyway V1 baseline schema",
+      "body": "Create V1 baseline with tables product, customer, orders, order_item. Add primary keys, FKs, not null, unique sku, indexes on product.sku, orders.created_at, orders.status.",
+      "labels": ["Database","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Domain entities and enums",
+      "body": "Create Product, Customer, Order, OrderItem with OrderStatus enum values NEW CONFIRMED SHIPPED DELIVERED CANCELLED. Add validation annotations and @Version on aggregates.",
+      "labels": ["Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Map JPA relationships",
+      "body": "Order one to many OrderItem. OrderItem many to one Product. Order many to one Customer. Set cascade and fetch as needed.",
+      "labels": ["Database","Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Repositories",
+      "body": "Create ProductRepository, CustomerRepository, OrderRepository, OrderItemRepository. Add query methods for status, date range, and low stock.",
+      "labels": ["Backend","Database","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "OrderService core flow",
+      "body": "Implement placeOrder that validates stock, computes totals, persists order and items, decrements inventory in one transaction.",
+      "labels": ["Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Order read and status operations",
+      "body": "Implement getOrder, listOrders with filters and pageable, updateStatus with legal transition checks, cancelOrder with restock logic.",
+      "labels": ["Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "ProductService CRUD and stock adjustments",
+      "body": "Implement create, list, update price or stock. Add low stock finder.",
+      "labels": ["Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "DTOs and mapping",
+      "body": "Create CreateOrderRequest with customer and line items. Create OrderResponse with items and totals. Create ProductRequest and ProductResponse. Implement manual mappers.",
+      "labels": ["API","Backend","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "REST endpoints",
+      "body": "Add endpoints POST orders, GET orders id, GET orders with filters status from to pageable, POST orders id status, POST orders id cancel, POST products, GET products, PATCH products id.",
+      "labels": ["API","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Global exception handling and error schema",
+      "body": "Add @ControllerAdvice. Return consistent JSON with timestamp path message details.",
+      "labels": ["API","Quality","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Dev seed data",
+      "body": "Seed sample products and one customer using data.sql or CommandLineRunner for dev profile.",
+      "labels": ["Database","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Local run and OpenAPI verification",
+      "body": "Run mvnw spring-boot:run in dev. Verify endpoints. Verify Swagger UI at slash swagger-ui slash index.html.",
+      "labels": ["API","MVP","Project"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Unit tests for OrderService",
+      "body": "Use JUnit and Mockito. Cover stock checks, totals, and illegal transitions.",
+      "labels": ["Testing","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Integration tests with Testcontainers Postgres",
+      "body": "Use SpringBootTest with Testcontainers. Cover place order end to end.",
+      "labels": ["Testing","Database","MVP"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "Jacoco coverage threshold",
+      "body": "Enable Jacoco and fail build on coverage below threshold you set.",
+      "labels": ["Testing","Quality"],
+      "milestone": "MVP Backend"
+    },
+    {
+      "title": "GitHub Actions CI",
+      "body": "Create ci.yml that caches Maven, builds, runs tests, uploads Jacoco report artifact. Add build badge to README.",
+      "labels": ["CI","Testing","Project"],
+      "milestone": "CI and Docker"
+    },
+    {
+      "title": "Dockerfile multi stage",
+      "body": "Create multi stage Dockerfile for Spring Boot jar. Document build and run commands.",
+      "labels": ["Docker","Project"],
+      "milestone": "CI and Docker"
+    },
+    {
+      "title": "Docker Compose with Postgres",
+      "body": "Create docker compose with Postgres and the app. Use env vars for DB settings. Document compose up path.",
+      "labels": ["Docker","Database","Project"],
+      "milestone": "CI and Docker"
+    },
+    {
+      "title": "Request logging with MDC",
+      "body": "Add filter that adds request id to MDC. Log request id in each log line.",
+      "labels": ["Observability","Quality"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Actuator metrics curation",
+      "body": "Expose health info and metrics safely. Document endpoints. Keep sensitive paths disabled by default.",
+      "labels": ["Observability","Config"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "README overhaul",
+      "body": "Add overview, feature list, tech stack, local run guide, Docker run guide, example curl, Swagger URL, architecture diagram, CI badge.",
+      "labels": ["Docs","Project"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Contributing and API reference",
+      "body": "Create CONTRIBUTING with style and test steps. Add API.md if you want a fixed spec in addition to Swagger.",
+      "labels": ["Docs","Quality"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Project board and labels",
+      "body": "Create GitHub Project board Todo In Progress Review Done. Apply labels to all issues. Link issues to milestones.",
+      "labels": ["Project"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Pagination defaults",
+      "body": "Add pageable defaults to list endpoints. Document params.",
+      "labels": ["API","Stretch"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Product search",
+      "body": "Add search by name and category. Use Spring Data derived queries or custom JPQL.",
+      "labels": ["API","Stretch"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Order confirmation email or PDF invoice stub",
+      "body": "On order creation trigger email send or generate a PDF invoice. A stub or log is acceptable. Document behavior.",
+      "labels": ["Backend","Stretch"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Simple auth for write endpoints",
+      "body": "Protect write endpoints using Spring Security. Use in memory user or JWT if preferred. Keep it minimal.",
+      "labels": ["Security","Stretch"],
+      "milestone": "Polish and Stretch"
+    },
+    {
+      "title": "Static analysis",
+      "body": "Add SpotBugs or SonarCloud. Document how to run and view results.",
+      "labels": ["Quality","Stretch"],
+      "milestone": "Polish and Stretch"
+    }
+  ]
+}
+
