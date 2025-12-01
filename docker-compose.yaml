@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: oms-postgres
+    environment:
+      POSTGRES_DB: oms
+      POSTGRES_USER: oms_user
+      POSTGRES_PASSWORD: oms_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - oms_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U oms_user -d oms"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  oms-service:
+    build:
+      context: ./oms-service
+      dockerfile: Dockerfile
+    container_name: oms-service
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/oms
+      SPRING_DATASOURCE_USERNAME: oms_user
+      SPRING_DATASOURCE_PASSWORD: oms_password
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  oms_pgdata:
+
