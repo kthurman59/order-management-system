@@ -1,5 +1,6 @@
 package com.kevdev.oms.service;
 
+import com.kevdev.oms.exception.ResourceNotFoundException;
 import com.kevdev.oms.dto.CreateOrderRequest;
 import com.kevdev.oms.dto.OrderProductSummary;
 import com.kevdev.oms.dto.OrderResponse;
@@ -42,13 +43,13 @@ public class OrderService {
 
     public OrderResponse getOrder(Long id) {
         Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id " + id));
         return toResponse(order);
     }
 
     public OrderResponse createOrder(CreateOrderRequest request) {
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found with id " + request.getCustomerId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id " + request.getCustomerId()));
 
         List<Product> products = productRepository.findAllById(request.getProductIds());
         if (products.isEmpty()) {
@@ -72,7 +73,7 @@ public class OrderService {
 
     public OrderResponse updateOrder(Long id, CreateOrderRequest request) {
         Order existing = orderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with id " + id));
 
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found with id " + request.getCustomerId()));

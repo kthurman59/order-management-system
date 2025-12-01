@@ -1,6 +1,9 @@
 package com.kevdev.oms.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 
 @Entity
@@ -11,23 +14,19 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "name must not be blank")
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @NotBlank(message = "sku must not be blank")
+    @Column(nullable = false, unique = true)
     private String sku;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @NotNull(message = "price must not be null")
+    @Column(nullable = false)
     private BigDecimal price;
 
     public Product() {
-        // for JPA
-    }
-
-    public Product(String name, String sku, BigDecimal price) {
-        this.name = name;
-        this.sku = sku;
-        this.price = price;
     }
 
     public Long getId() {
