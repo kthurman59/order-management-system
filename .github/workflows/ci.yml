@@ -39,5 +39,5 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build service image with Docker compose
-        run: docker compose -f docker-compose.yml build oms-service
+        run: docker compose -f docker-compose.yaml build oms-service
 
