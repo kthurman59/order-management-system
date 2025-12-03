@@ -8,8 +8,6 @@ services:
       POSTGRES_DB: oms
       POSTGRES_USER: oms_user
       POSTGRES_PASSWORD: oms_password
-    ports:
-      - "5432:5432"
     volumes:
       - oms_pgdata:/var/lib/postgresql/data
     healthcheck:
