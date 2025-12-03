@@ -1,6 +1,5 @@
 package com.kevdev.oms;
 
-import java.math.BigDecimal;
 import com.kevdev.oms.entity.Customer;
 import com.kevdev.oms.entity.Order;
 import com.kevdev.oms.entity.Product;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -33,7 +33,7 @@ class OrderRepositoryTest {
 
     @Test
     @Transactional
-    void findByIdWithCustomerAndProducts_returns_fully_initialized_order() {
+    void findById_returns_order_with_customer_and_products() {
         Customer customer = new Customer();
         customer.setName("Test Customer");
         customer.setEmail("customer@example.com");
@@ -41,11 +41,13 @@ class OrderRepositoryTest {
 
         Product p1 = new Product();
         p1.setName("First product");
+        p1.setSku("P1-SKU");
         p1.setPrice(new BigDecimal("10.00"));
         p1 = productRepository.save(p1);
 
         Product p2 = new Product();
         p2.setName("Second product");
+        p2.setSku("P2-SKU");
         p2.setPrice(new BigDecimal("20.00"));
         p2 = productRepository.save(p2);
 
@@ -55,10 +57,11 @@ class OrderRepositoryTest {
         order.setOrderDate(LocalDateTime.now());
         order = orderRepository.save(order);
 
-        Order found = orderRepository.findByIdWithCustomerAndProducts(order.getId())
+        Order found = orderRepository.findById(order.getId())
                 .orElseThrow();
 
         assertThat(found.getCustomer().getId()).isEqualTo(customer.getId());
         assertThat(found.getProducts()).hasSize(2);
     }
 }
+
