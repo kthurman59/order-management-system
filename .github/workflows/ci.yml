@@ -1,17 +1,19 @@
 name: CI
 
-# stuff
 on:
   push:
     branches:
       - main
   pull_request:
-    branches: 
+    branches:
       - main
 
 jobs:
   build_test_and_docker:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout code
@@ -45,6 +47,23 @@ jobs:
             oms-service/target/site/jacoco
           if-no-files-found: ignore
 
+      - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build Docker image
-        run: docker compose -f docker-compose.yaml build oms-service
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/order-management-system-oms-service:${{ github.sha }}
+          docker build -t "$IMAGE" oms-service
+
+      - name: Push Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/order-management-system-oms-service:${{ github.sha }}
+          docker push "$IMAGE"
 
