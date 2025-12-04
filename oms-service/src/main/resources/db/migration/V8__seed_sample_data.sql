@@ -1,26 +1,81 @@
--- Seed customers
-INSERT INTO customer (id, name, email) VALUES
-  (1, 'Acme Corp', 'acme@example.com'),
-  (2, 'Globex Inc', 'globex@example.com');
+-- Seed sample customers, products and orders for dev
+INSERT INTO customer (name, email) VALUES
+  ('Alice Customer', 'alice@example.com'),
+  ('Bob Customer', 'bob@example.com'),
+  ('Carol Customer', 'carol@example.com'),
+  ('Dave Customer', 'dave@example.com');
 
--- Seed products
-INSERT INTO products (id, name, sku, price) VALUES
-  (1, 'Standard Widget', 'WIDGET-001', 19.99),
-  (2, 'Advanced Widget', 'WIDGET-002', 29.99),
-  (3, 'Gadget', 'GADGET-001', 9.50);
+-- Products table is named "products" in the current schema
+INSERT INTO products (name, sku, price) VALUES
+  ('Widget Basic',    'WIDGET_BASIC', 10.00),
+  ('Widget Pro',      'WIDGET_PRO',   20.00),
+  ('Gadget Standard', 'GADGET_STD',   15.50);
 
--- Seed orders
-INSERT INTO orders (id, customer_id, status, total_amount, created_at, order_date) VALUES
-  (1, 1, 'CREATED', 49.49, now(), now()),
-  (2, 2, 'CREATED', 29.99, now(), now());
+-- Orders
+INSERT INTO orders (customer_id, order_date, status, total_amount) VALUES
+  ((SELECT id FROM customer WHERE email = 'alice@example.com'),
+   NOW() - INTERVAL '10 days',
+   'COMPLETED',
+   30.00),
+  ((SELECT id FROM customer WHERE email = 'bob@example.com'),
+   NOW() - INTERVAL '5 days',
+   'PENDING',
+   20.00),
+  ((SELECT id FROM customer WHERE email = 'carol@example.com'),
+   NOW() - INTERVAL '2 days',
+   'COMPLETED',
+   15.50),
+  ((SELECT id FROM customer WHERE email = 'dave@example.com'),
+   NOW() - INTERVAL '1 days',
+   'CANCELLED',
+   10.00);
 
--- Link orders to products
+-- Join orders to products
+-- Note: join table columns are order_id and products_id
 INSERT INTO orders_products (order_id, products_id) VALUES
-  (1, 1),
-  (1, 3),
-  (2, 2);
+  (
+    (SELECT o.id
+       FROM orders o
+       JOIN customer c ON o.customer_id = c.id
+      WHERE c.email = 'alice@example.com'
+      ORDER BY o.order_date
+      LIMIT 1),
+    (SELECT id FROM products WHERE sku = 'WIDGET_BASIC')
+  ),
+  (
+    (SELECT o.id
+       FROM orders o
+       JOIN customer c ON o.customer_id = c.id
+      WHERE c.email = 'alice@example.com'
+      ORDER BY o.order_date
+      LIMIT 1),
+    (SELECT id FROM products WHERE sku = 'WIDGET_PRO')
+  ),
+  (
+    (SELECT o.id
+       FROM orders o
+       JOIN customer c ON o.customer_id = c.id
+      WHERE c.email = 'bob@example.com'
+      ORDER BY o.order_date
+      LIMIT 1),
+    (SELECT id FROM products WHERE sku = 'WIDGET_PRO')
+  ),
+  (
+    (SELECT o.id
+       FROM orders o
+       JOIN customer c ON o.customer_id = c.id
+      WHERE c.email = 'carol@example.com'
+      ORDER BY o.order_date
+      LIMIT 1),
+    (SELECT id FROM products WHERE sku = 'GADGET_STD')
+  ),
+  (
+    (SELECT o.id
+       FROM orders o
+       JOIN customer c ON o.customer_id = c.id
+      WHERE c.email = 'dave@example.com'
+      ORDER BY o.order_date
+      LIMIT 1),
+    (SELECT id FROM products WHERE sku = 'WIDGET_BASIC')
+  );
 
--- Keep sequences in sync with explicit ids
-SELECT pg_catalog.setval('customer_id_seq', 2, true);
-SELECT pg_catalog.setval('product_id_seq', 3, true);
-SELECT pg_catalog.setval('orders_id_seq', 2, true);
