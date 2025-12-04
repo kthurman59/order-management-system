@@ -83,5 +83,21 @@ class OrderControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.customerId").value(1L));
     }
+
+    @Test
+    void createOrder_invalidRequest_returnsBadRequest() throws Exception {
+        // arrange  missing customerId and empty productIds violate @NotNull and @NotEmpty
+        CreateOrderRequest request = new CreateOrderRequest();
+        request.setCustomerId(null);
+        request.setProductIds(java.util.Collections.emptyList());
+
+        // act and assert
+        mockMvc.perform(
+                        post("/api/orders")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                )
+                .andExpect(status().isBadRequest());
+    }
 }
 
