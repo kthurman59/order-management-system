@@ -13,7 +13,7 @@
 
     <groupId>com.kevdev.oms</groupId>
     <artifactId>oms-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Order Management System</name>
     <description>Backend service for managing customer orders.</description>
     <packaging>jar</packaging>
