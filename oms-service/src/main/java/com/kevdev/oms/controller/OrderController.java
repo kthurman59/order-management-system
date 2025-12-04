@@ -1,15 +1,16 @@
 package com.kevdev.oms.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import com.kevdev.oms.dto.CreateOrderRequest;
 import com.kevdev.oms.dto.OrderResponse;
 import com.kevdev.oms.service.OrderService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +25,8 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
-    
-        @GetMapping
+
+    @GetMapping
     @Operation(summary = "List all orders")
     public List<OrderResponse> getAll() {
         return orderService.getAllOrders();
@@ -46,6 +47,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new order")
     @ApiResponses({
             @ApiResponse(
@@ -58,7 +60,7 @@ public class OrderController {
                     content = @Content(schema = @Schema(implementation = com.kevdev.oms.web.ApiError.class))
             )
     })
-    public OrderResponse create(@RequestBody CreateOrderRequest request) {
+    public OrderResponse create(@Valid @RequestBody CreateOrderRequest request) {
         return orderService.createOrder(request);
     }
 
@@ -78,11 +80,12 @@ public class OrderController {
             )
     })
     public OrderResponse update(@PathVariable Long id,
-                                @RequestBody CreateOrderRequest request) {
+                                @Valid @RequestBody CreateOrderRequest request) {
         return orderService.updateOrder(id, request);
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete an order")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Order deleted"),
@@ -96,3 +99,4 @@ public class OrderController {
         orderService.deleteOrder(id);
     }
 }
+
