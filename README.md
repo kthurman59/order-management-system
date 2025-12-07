@@ -1,4 +1,9 @@
-## OMS service backend
+### Status
+
+Version: 1.0.0  
+State: Stable  
+CI: GitHub Actions (tests, coverage gate, Docker image to GHCR)
+# OMS service backend
 
 Spring Boot service that exposes basic CRUD APIs for customers, products, and orders.
 

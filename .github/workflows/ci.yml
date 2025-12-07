@@ -34,6 +34,7 @@ jobs:
             m2-${{ runner.os }}-
 
       - name: Build and test with Maven
+        working-directory: oms-service
         run: ./mvnw -B verify
 
       - name: Upload test and coverage reports
@@ -42,8 +43,8 @@ jobs:
         with:
           name: test-and-coverage-reports
           path: |
-            target/surefire-reports
-            target/site/jacoco
+            oms-service/target/surefire-reports
+            oms-service/target/site/jacoco
           if-no-files-found: ignore
 
       - name: Log in to GitHub Container Registry
@@ -57,12 +58,12 @@ jobs:
       - name: Build Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/inventory-service:${{ github.sha }}
-          docker build -t "$IMAGE" .
+          IMAGE=ghcr.io/${{ github.repository_owner }}/order-management-system-oms-service:${{ github.sha }}
+          docker build -t "$IMAGE" oms-service
 
       - name: Push Docker image
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/inventory-service:${{ github.sha }}
+          IMAGE=ghcr.io/${{ github.repository_owner }}/order-management-system-oms-service:${{ github.sha }}
           docker push "$IMAGE"
 
