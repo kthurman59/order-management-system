@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,9 +53,27 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id " + request.getCustomerId()));
 
         List<Product> products = productRepository.findAllById(request.getProductIds());
-        if (products.isEmpty()) {
-            throw new IllegalArgumentException("No products found for ids " + request.getProductIds());
+
+        Set<Long> foundProductIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
+
+        List<Long> missingProductIds = request.getProductIds()
+                .stream()
+                .filter(id -> !foundProductIds.contains(id))
+                .toList();
+
+        if (!missingProductIds.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "Products not found with ids " + missingProductIds
+            );
         }
+
+        // This is the old way
+        //List<Product> products = productRepository.findAllById(request.getProductIds());
+        //if (products.isEmpty()) {
+        //    throw new IllegalArgumentException("No products found for ids " + request.getProductIds());
+        //}
 
         BigDecimal total = products.stream()
                 .map(Product::getPrice)
