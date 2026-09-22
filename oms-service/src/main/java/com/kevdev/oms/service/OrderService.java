@@ -95,12 +95,25 @@ public class OrderService {
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id " + id));
 
         Customer customer = customerRepository.findById(request.getCustomerId())
-                .orElseThrow(() -> new IllegalArgumentException("Customer not found with id " + request.getCustomerId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with id " + request.getCustomerId()));
 
         List<Product> products = productRepository.findAllById(request.getProductIds());
-        if (products.isEmpty()) {
-            throw new IllegalArgumentException("No products found for ids " + request.getProductIds());
+
+        Set<Long> foundProductIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toSet());
+
+        List<Long> missingProductIds = request.getProductIds()
+                .stream()
+                .filter(productid -> !foundProductIds.contains(productid))
+                .toList();
+
+        if (!missingProductIds.isEmpty()) {
+            throw new ResourceNotFoundException(
+                    "Products not found with ids " + missingProductIds
+            );
         }
+
 
         BigDecimal total = products.stream()
                 .map(Product::getPrice)
